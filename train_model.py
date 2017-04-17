@@ -10,6 +10,7 @@ extension = 'csv'
 existing_csvs = [i for i in glob.glob('data/*.{}'.format(extension))]
 print('Training with %s files' % len(existing_csvs))
 
+# Put all training data from multiple files in the folder into the lines array
 lines = []
 for csv_file_name in existing_csvs:
 
@@ -17,21 +18,6 @@ for csv_file_name in existing_csvs:
         reader = csv.reader(csvfile)
         for line in reader:
             lines.append(line)
-
-import matplotlib.pyplot as plt
-# from scipy.signal import savgol_filter
-from scipy.ndimage.filters import gaussian_filter1d
-from scipy.signal import butter, lfilter
-
-
-# image = cv2.imread('./data/IMG/right_2017_04_12_19_30_13_317.jpg')
-# image = pre_processing.process(image)
-# # image = image[55:135, 0:320]
-# image = cv2.resize(image, pre_processing.size)
-# plt.imshow(image)
-# plt.show()
-#
-# exit(0)
 
 print('%s data points' % len(lines))
 
@@ -47,7 +33,6 @@ WIDTH, HEIGHT = pre_processing.size[0], pre_processing.size[1]
 def generator(samples, batch_size=32):
 
     samples = np.array(samples)
-    # samples[:, 5] = gaussian_filter1d(np.float32(np.array(samples)[:, 5]), 0.5)
     num_samples = len(samples)
     while 1:
         shuffle(samples)
@@ -118,7 +103,6 @@ def custom_model():
 
     model = Sequential()
     model.add(Lambda(lambda x: x/255.0 - 0.5, input_shape=(HEIGHT, WIDTH, 3)))
-    # model.add(Cropping2D(cropping=((15, 3), (0, 0))))
     dropout = 0.2
     model.add(Dropout(dropout))
     model.add(Convolution2D(24, 5, 5, subsample=(2, 2), activation='relu'))
